@@ -1,0 +1,117 @@
+﻿@model PagedList.IPagedList<ProductManagement.Models.Product>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+    $(function () {
+        $("#checkAll").click(function () {
+            $("input[name='ids']").prop('checked', $(this).prop('checked'));
+        });
+
+        $("input[name='ids']").click(function () {
+            if ($("input[name='ids']").length == $("input[name='ids']:checked").length) {
+                $("#checkAll").prop('checked', true);
+            }
+            else {
+                $("#checkAll").prop('checked', false);
+            }
+        });
+
+        $("#deleteButton").click(function () {
+            var count = $("input[name='ids']:checked").length;
+            if (count == 0) {
+                swal("No records selected to delete");
+                return false;
+            }
+            else {
+                return swal(count + " record(s) will be deleted");
+            }
+        });
+    });
+</script>
+@{ ViewBag.Title = "Index"; }
+
+@using (Html.BeginForm("List", "Products", FormMethod.Get))
+{
+<div class="form-inline">
+    @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control" })
+    <input type="submit" value="Search" class="btn btn-primary" />
+
+</div>}
+<br />
+@using (Html.BeginForm("List", "Products", FormMethod.Post))
+{
+<button type="submit" name="ProductId" value="Delete" id="deleteButton" class="btn btn-sm btn-danger rounded-0" ><i class="fa fa-trash-o"></i> Delete</button>
+                <br />
+                                <div style="height:20px;"></div>
+                                                <table class="table">
+                                                    <tr>
+                                                        <th>
+                                                            <input type="checkbox" name="checkAll" class="checkAll" id="checkAll" />
+                                                        </th>
+                                                        <th>
+                                                            @Html.Label("Product Image")
+                                                        </th>
+                                                        <th style="width: 15%">
+                                                            @Html.Label("Name")
+                                                            @Html.ActionLink(" ", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter }, new { @class = "fa fa-fw fa-sort" })
+                                                        </th>
+                                                        <th style="width: 12%">
+                                                            @Html.Label("Category")
+                                                            @Html.ActionLink(" ", "Index", new { sortOrder = ViewBag.DateSortParm, currentFilter = ViewBag.CurrentFilter }, new { @class = "fa fa-fw fa-sort" })
+                                                        </th>
+                                                        <th style="width: 10%">
+                                                            @Html.Label("Price")
+                                                        </th>
+                                                        <th style="width: 10%">
+                                                            @Html.Label("Quantity")
+                                                        </th>
+                                                        <th style="width: 20%">
+                                                            @Html.Label("Short Description")
+                                                        </th>
+                                                        <th></th>
+                                                    </tr>
+
+                                                    @foreach (var item in Model)
+                                                    {
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="ids" class="ids" id="ids" value="@item.Id" />
+                                        </td>
+                                        <td>
+                                            <img src="@Url.Content(item.Small_img)" height="100" width="70" alt="Alternate Text" />
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Category)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Price)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Quantity)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Short_desc)
+                                        </td>
+                                        <td>
+                                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-primary" })
+                                            @Html.ActionLink("Delete", "Delete", new { id = item.Id },htmlAttributes: new { @onclick = "return swal('Product Deleted!');",@class = "btn btn-primary" })
+
+                                                
+                                        </td>
+                                    </tr>}
+                                                </table>}
+<div id="container" style="margin-left: 20px">
+    <p></p>
+    <p></p>
+    <div class="pagination" style="margin-left: 400px">
+        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber)
+        of @Model.PageCount   @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+    </div>
+</div>

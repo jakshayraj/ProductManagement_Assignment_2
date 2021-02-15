@@ -1,0 +1,36 @@
+﻿@model ProductManagement.Models.Product
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li>@Html.ActionLink("Product List", "List")</li>
+                <li>@Html.ActionLink("Add Product", "Create")</li>
+
+            </ul>
+            <a class="btn navbar-btn btn-danger navbar-right" role="button" href="@Url.Action("Logout", "Home")">Logout</a>
+        </div>
+    </div>
+</div>
+
+<div>
+    @if (User.Identity.IsAuthenticated)
+    {
+    <p>
+        Dear - @User.Identity.Name
+     
+    </p>
+    }
+</div>
